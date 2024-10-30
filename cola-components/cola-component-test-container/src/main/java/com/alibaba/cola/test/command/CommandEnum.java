@@ -10,6 +10,7 @@ public enum CommandEnum {
     TestMethodRunCmd("", "[^\\s]*[\\(#].*"),
     TestClassRunCmd("", "(\\w+\\.\\w+){1,}"),
     GuideCmd("", "^[rhq]$"),
+    AllTestClassRunCmd("", "1-")
     ;
 
     private String cmd;

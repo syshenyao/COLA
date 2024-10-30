@@ -34,6 +34,8 @@ public class GuideCmd extends AbstractCommand {
             System.out.println("**** 3.重复上一次测试，只需在控制台输入字母 - ‘r’");
             System.out.println("**** 4.自动生成ColaTest测试类,请输入‘new 方法全称  参数1 参数2 ...’");
             System.out.println("**** 例如：new com.alibaba.crm.sales.domain.customer.entity.CustomerE#addContact");
+            System.out.println("**** 5.自动运行该包下的所有测试类 - ‘1-XXX’");
+            System.out.println("**** 例如：1-com.alibaba.cola.test");
             System.out.println("***********************************************************************************");
         }else if(cmdRaw.equals(GUIDE_REPEAT)){
             TestsContainer.execute(preCmd.cmdRaw);

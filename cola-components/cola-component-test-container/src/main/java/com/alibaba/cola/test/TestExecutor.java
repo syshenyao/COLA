@@ -1,9 +1,11 @@
 package com.alibaba.cola.test;
 
 
+import com.alibaba.cola.test.command.AllTestClassRunCmd;
 import com.alibaba.cola.test.command.TestClassRunCmd;
 import com.alibaba.cola.test.command.TestMethodRunCmd;
 import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.TestExecutionListener;
@@ -54,7 +56,23 @@ public class TestExecutor {
         // 运行测试方法
         launcher.execute(request, new MyTestExecutionListener());
     }
-
+    
+    public void execute(AllTestClassRunCmd cmd) throws Exception {
+        runAllClassTest(cmd.getPackageName());
+    }
+    
+    private void runAllClassTest(String packageName) {
+        // 创建测试类
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder
+                .request()
+                .selectors(DiscoverySelectors.selectPackage(packageName))
+                .build();
+        
+        // 运行测试方法
+        launcher.execute(request, new MyTestExecutionListener());
+    }
+    
+    
     private String extractParamTypeName(Class<?> testClz, String methodName) {
         for (Method method : testClz.getMethods()) {
             if(methodName.equals(method.getName())){

@@ -21,21 +21,7 @@ public class Demo {
         Assertions.assertEquals(1,1);
         System.out.println("test one end");
     }
-
-    @Test
-    public void testTwo(){
-        System.out.println("test two");
-    }
-
-    @Test
-    void testThree(){
-        System.out.println("test three");
-    }
-
-    @Test
-    public void testParam(String param){
-        System.out.println("hello param");
-    }
+    
 
     @AfterEach
     public void after(){

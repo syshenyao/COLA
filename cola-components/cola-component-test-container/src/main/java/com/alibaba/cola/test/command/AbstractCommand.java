@@ -82,7 +82,9 @@ public abstract class AbstractCommand {
             command = new TestClassRunCmd(cmdRaw);
         }else if(cmdRaw.matches(CommandEnum.GuideCmd.getDesc())){
             command = new GuideCmd(cmdRaw);
-        }
+        }else if(cmdRaw.startsWith(CommandEnum.AllTestClassRunCmd.getDesc())){
+             command = new AllTestClassRunCmd(cmdRaw);
+         }
 
         if(command != null){
             preCmd = curCmd;
