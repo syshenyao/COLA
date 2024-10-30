@@ -1,5 +1,6 @@
 package com.alibaba.cola.test;
 
+import com.alibaba.cola.test.command.AllTestClassRunCmd;
 import com.alibaba.cola.test.command.TestClassRunCmd;
 import com.alibaba.cola.test.command.TestMethodRunCmd;
 import org.junit.After;
@@ -11,13 +12,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * TestExecutor
@@ -42,7 +46,18 @@ public class TestExecutor {
 
         Class<?> testClz = Class.forName(className);
         Object testInstance = getTestInstance(testClz);
-        runClassTest(cmd, testClz, testInstance);
+        runClassTest(testClz, testInstance);
+    }
+    
+    public void execute(AllTestClassRunCmd cmd) throws Exception {
+        // 获取包下所有类
+        List<Class<?>> classes = getClasses(cmd.getPackageName());
+        for (Class<?> clazz : classes) {
+            setClassName(clazz.getName());
+            Class<?> testClz = Class.forName(className);
+            Object testInstance = getTestInstance(testClz);
+            runClassTest(testClz, testInstance);
+        }
     }
 
     public void execute(TestMethodRunCmd cmd) throws Exception {
@@ -52,6 +67,22 @@ public class TestExecutor {
         Class<?> testClz = Class.forName(className);
         Object testInstance = getTestInstance(testClz);
         runMethodTest(cmd, testClz, testInstance);
+    }
+    
+    private List<Class<?>> getClasses(String packageName) throws Exception {
+        List<Class<?>> classes = new ArrayList<>();
+        String path = packageName.replace('.', '/');
+        URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
+        File directory = new File(resource.toURI());
+        if (directory.exists()) {
+            for (File file : directory.listFiles()) {
+                if (file.isFile() && file.getName().endsWith(".class")) {
+                    String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+                    classes.add(Class.forName(className));
+                }
+            }
+        }
+        return classes;
     }
 
     private void runMethodTest(TestMethodRunCmd cmd, Class<?> testClz, Object testInstance) throws Exception{
@@ -81,7 +112,7 @@ public class TestExecutor {
         return testInstance;
     }
 
-    private void runClassTest(TestClassRunCmd cmd, Class<?> testClz, Object testInstance)throws Exception{
+    private void runClassTest(Class<?> testClz, Object testInstance)throws Exception{
         Method[] allMethods = testClz.getMethods();
         Method beforeMethod = null;
         Method afterMethod = null;
